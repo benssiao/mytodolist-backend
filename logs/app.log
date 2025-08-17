@@ -1,0 +1,7 @@
+2025-08-13T20:20:22.871-07:00  INFO 15536 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-13T20:20:22.874-07:00  INFO 15536 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-13T20:20:22.890-07:00  INFO 15536 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-13T20:20:22.892-07:00 TRACE 15536 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Handling #sessionFactoryClosed from [org.hibernate.internal.SessionFactoryImpl@459ced45] for TypeConfiguration
+2025-08-13T20:20:22.892-07:00 DEBUG 15536 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@5f8560f1] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@459ced45]
+2025-08-13T20:20:22.893-07:00  INFO 15536 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown initiated...
+2025-08-13T20:20:22.895-07:00  INFO 15536 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown completed.

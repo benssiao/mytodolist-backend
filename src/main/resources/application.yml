@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: dev
+  security:
+    enabled: false
+    user:
+      name: admin
+      password: password

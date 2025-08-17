@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:todolist_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  server:
+    port: 0 # Random port for tests
+logging:
+  level:
+    com.mytodolist: INFO # Your app - keep important messages
+    org.springframework: WARN # Spring framework - only warnings/errors
+    org.hibernate: WARN # Hibernate - only warnings/errors
+    root: WARN # Everything else - minimal noise
+
