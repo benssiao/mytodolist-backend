@@ -1,7 +1,95 @@
-2025-08-13T20:20:22.871-07:00  INFO 15536 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2025-08-13T20:20:22.874-07:00  INFO 15536 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
-2025-08-13T20:20:22.890-07:00  INFO 15536 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-08-13T20:20:22.892-07:00 TRACE 15536 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Handling #sessionFactoryClosed from [org.hibernate.internal.SessionFactoryImpl@459ced45] for TypeConfiguration
-2025-08-13T20:20:22.892-07:00 DEBUG 15536 --- [SpringApplicationShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@5f8560f1] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@459ced45]
-2025-08-13T20:20:22.893-07:00  INFO 15536 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown initiated...
-2025-08-13T20:20:22.895-07:00  INFO 15536 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-7 - Shutdown completed.
+2025-08-17T21:18:20.553-07:00  INFO 534040 --- [main] c.m.controller.EntryControllerTest       : Starting EntryControllerTest using Java 21.0.8 with PID 534040 (started by ben in /home/ben/Documents/todolistapp/backend)
+2025-08-17T21:18:20.555-07:00 DEBUG 534040 --- [main] c.m.controller.EntryControllerTest       : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-17T21:18:20.556-07:00  INFO 534040 --- [main] c.m.controller.EntryControllerTest       : The following 1 profile is active: "dev"
+2025-08-17T21:18:20.565-07:00 DEBUG 534040 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@29f0c4f2
+2025-08-17T21:18:21.413-07:00  WARN 534040 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'entryController' defined in file [/home/ben/Documents/todolistapp/backend/target/classes/com/mytodolist/controller/EntryController.class]: Unsatisfied dependency expressed through constructor parameter 1: No qualifying bean of type 'com.mytodolist.service.UserService' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-08-17T21:18:21.428-07:00  INFO 534040 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-08-17T21:18:21.445-07:00 ERROR 534040 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 1 of constructor in com.mytodolist.controller.EntryController required a bean of type 'com.mytodolist.service.UserService' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.mytodolist.service.UserService' in your configuration.
+
+2025-08-17T21:20:14.583-07:00  INFO 535752 --- [main] c.m.controller.EntryControllerTest       : Starting EntryControllerTest using Java 21.0.8 with PID 535752 (started by ben in /home/ben/Documents/todolistapp/backend)
+2025-08-17T21:20:14.584-07:00 DEBUG 535752 --- [main] c.m.controller.EntryControllerTest       : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-17T21:20:14.584-07:00  INFO 535752 --- [main] c.m.controller.EntryControllerTest       : The following 1 profile is active: "dev"
+2025-08-17T21:20:14.591-07:00 DEBUG 535752 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@13047d7d
+2025-08-17T21:20:15.549-07:00 DEBUG 535752 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 6 mappings in 'requestMappingHandlerMapping'
+2025-08-17T21:20:15.604-07:00 DEBUG 535752 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-08-17T21:20:15.619-07:00 DEBUG 535752 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-17T21:20:15.638-07:00  WARN 535752 --- [main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-08-17T21:20:15.649-07:00 DEBUG 535752 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-17T21:20:15.684-07:00  INFO 535752 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-08-17T21:20:15.763-07:00  INFO 535752 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-08-17T21:20:15.763-07:00  INFO 535752 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-08-17T21:20:15.764-07:00  INFO 535752 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2025-08-17T21:20:15.779-07:00  INFO 535752 --- [main] c.m.controller.EntryControllerTest       : Started EntryControllerTest in 1.404 seconds (process running for 1.843)
+2025-08-17T21:20:15.873-07:00 DEBUG 535752 --- [SpringApplicationShutdownHook] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@13047d7d, started on Sun Aug 17 21:20:14 PDT 2025
+2025-08-17T21:21:05.033-07:00  INFO 536608 --- [main] c.m.controller.EntryControllerTest       : Starting EntryControllerTest using Java 21.0.8 with PID 536608 (started by ben in /home/ben/Documents/todolistapp/backend)
+2025-08-17T21:21:05.034-07:00 DEBUG 536608 --- [main] c.m.controller.EntryControllerTest       : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-17T21:21:05.034-07:00  INFO 536608 --- [main] c.m.controller.EntryControllerTest       : The following 1 profile is active: "dev"
+2025-08-17T21:21:05.042-07:00 DEBUG 536608 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@6093d508
+2025-08-17T21:21:05.980-07:00 DEBUG 536608 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 6 mappings in 'requestMappingHandlerMapping'
+2025-08-17T21:21:06.037-07:00 DEBUG 536608 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-08-17T21:21:06.053-07:00 DEBUG 536608 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-17T21:21:06.073-07:00  WARN 536608 --- [main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-08-17T21:21:06.084-07:00 DEBUG 536608 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-17T21:21:06.126-07:00  INFO 536608 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-08-17T21:21:06.207-07:00  INFO 536608 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-08-17T21:21:06.208-07:00  INFO 536608 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-08-17T21:21:06.210-07:00  INFO 536608 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2025-08-17T21:21:06.228-07:00  INFO 536608 --- [main] c.m.controller.EntryControllerTest       : Started EntryControllerTest in 1.392 seconds (process running for 1.839)
+2025-08-17T21:21:06.326-07:00 DEBUG 536608 --- [SpringApplicationShutdownHook] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@6093d508, started on Sun Aug 17 21:21:05 PDT 2025
+2025-08-17T21:24:43.274-07:00  INFO 539551 --- [main] c.m.controller.EntryControllerTest       : Starting EntryControllerTest using Java 21.0.8 with PID 539551 (started by ben in /home/ben/Documents/todolistapp/backend)
+2025-08-17T21:24:43.275-07:00 DEBUG 539551 --- [main] c.m.controller.EntryControllerTest       : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-17T21:24:43.275-07:00  INFO 539551 --- [main] c.m.controller.EntryControllerTest       : The following 1 profile is active: "dev"
+2025-08-17T21:24:43.282-07:00 DEBUG 539551 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@1bfe3203
+2025-08-17T21:24:44.228-07:00 DEBUG 539551 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 6 mappings in 'requestMappingHandlerMapping'
+2025-08-17T21:24:44.283-07:00 DEBUG 539551 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-08-17T21:24:44.297-07:00 DEBUG 539551 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-17T21:24:44.317-07:00  WARN 539551 --- [main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-08-17T21:24:44.327-07:00 DEBUG 539551 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-17T21:24:44.360-07:00  INFO 539551 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-08-17T21:24:44.427-07:00  INFO 539551 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-08-17T21:24:44.428-07:00  INFO 539551 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-08-17T21:24:44.429-07:00  INFO 539551 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2025-08-17T21:24:44.443-07:00  INFO 539551 --- [main] c.m.controller.EntryControllerTest       : Started EntryControllerTest in 1.37 seconds (process running for 1.837)
+2025-08-17T21:24:44.510-07:00 DEBUG 539551 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.mytodolist.controller.EntryController#postEntity(EntryDTO)
+2025-08-17T21:24:44.542-07:00 DEBUG 539551 --- [main] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.mytodolist.dto.EntryDTO@45d46254]
+2025-08-17T21:24:44.544-07:00  INFO 539551 --- [main] c.mytodolist.controller.EntryController  : Creating new entry for user: testuser
+2025-08-17T21:24:44.545-07:00  INFO 539551 --- [main] c.mytodolist.controller.EntryController  : Entry body: Test entry body
+2025-08-17T21:24:44.550-07:00 DEBUG 539551 --- [main] .w.s.m.a.ResponseStatusExceptionResolver : Resolved [com.mytodolist.exceptions.UserNotFoundException: 404 NOT_FOUND "User not found with username: testuser"]
+2025-08-17T21:24:44.584-07:00 DEBUG 539551 --- [SpringApplicationShutdownHook] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@1bfe3203, started on Sun Aug 17 21:24:43 PDT 2025
+2025-08-17T21:27:22.411-07:00  INFO 541667 --- [main] c.m.controller.EntryControllerTest       : Starting EntryControllerTest using Java 21.0.8 with PID 541667 (started by ben in /home/ben/Documents/todolistapp/backend)
+2025-08-17T21:27:22.411-07:00 DEBUG 541667 --- [main] c.m.controller.EntryControllerTest       : Running with Spring Boot v3.5.4, Spring v6.2.9
+2025-08-17T21:27:22.412-07:00  INFO 541667 --- [main] c.m.controller.EntryControllerTest       : The following 1 profile is active: "dev"
+2025-08-17T21:27:22.421-07:00 DEBUG 541667 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@1bfe3203
+2025-08-17T21:27:23.400-07:00 DEBUG 541667 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 6 mappings in 'requestMappingHandlerMapping'
+2025-08-17T21:27:23.456-07:00 DEBUG 541667 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-08-17T21:27:23.473-07:00 DEBUG 541667 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-17T21:27:23.498-07:00  WARN 541667 --- [main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-08-17T21:27:23.512-07:00 DEBUG 541667 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-17T21:27:23.562-07:00  INFO 541667 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-08-17T21:27:23.662-07:00  INFO 541667 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-08-17T21:27:23.662-07:00  INFO 541667 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-08-17T21:27:23.663-07:00  INFO 541667 --- [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2025-08-17T21:27:23.681-07:00  INFO 541667 --- [main] c.m.controller.EntryControllerTest       : Started EntryControllerTest in 1.494 seconds (process running for 1.934)
+2025-08-17T21:27:23.737-07:00 DEBUG 541667 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.mytodolist.controller.EntryController#getEntries(String)
+2025-08-17T21:27:23.754-07:00 DEBUG 541667 --- [main] .w.s.m.a.ResponseStatusExceptionResolver : Resolved [com.mytodolist.exceptions.UserNotFoundException: 404 NOT_FOUND "User not found with username: testuser"]
+2025-08-17T21:27:23.776-07:00 DEBUG 541667 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.mytodolist.controller.EntryController#postEntity(EntryDTO)
+2025-08-17T21:27:23.803-07:00 DEBUG 541667 --- [main] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [com.mytodolist.dto.EntryDTO@39342614]
+2025-08-17T21:27:23.804-07:00  INFO 541667 --- [main] c.mytodolist.controller.EntryController  : Creating new entry for user: testuser
+2025-08-17T21:27:23.805-07:00  INFO 541667 --- [main] c.mytodolist.controller.EntryController  : Entry body: Test entry body
+2025-08-17T21:27:23.806-07:00 DEBUG 541667 --- [main] .w.s.m.a.ResponseStatusExceptionResolver : Resolved [com.mytodolist.exceptions.UserNotFoundException: 404 NOT_FOUND "User not found with username: testuser"]
+2025-08-17T21:27:23.837-07:00 DEBUG 541667 --- [SpringApplicationShutdownHook] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@1bfe3203, started on Sun Aug 17 21:27:22 PDT 2025
