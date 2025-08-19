@@ -18,7 +18,10 @@ public class UserService {
 
     //CREATE
     public User createUser(User user) {
-        userRepository.save(user);
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
         return userRepository.save(user);
     }
 
@@ -32,10 +35,6 @@ public class UserService {
     }
 
     //UPDATE
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
-
     //DELETE
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);

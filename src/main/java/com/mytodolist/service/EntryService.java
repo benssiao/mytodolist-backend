@@ -10,6 +10,8 @@ import com.mytodolist.model.Entry;
 import com.mytodolist.model.User;
 import com.mytodolist.repository.EntryRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class EntryService {
 
@@ -38,29 +40,16 @@ public class EntryService {
     }
 
     //UPDATE
-    public Entry updateEntry(Entry entry, String newBody) {
-
+    public Entry updateEntryById(Long entryId, String newBody) {
+        Entry entry = getEntryById(entryId)
+                .orElseThrow(() -> new EntityNotFoundException("Entry with id " + entryId + " not found"));
         entry.setEntryBody(newBody);
         return entryRepository.save(entry);
-
-    }
-
-    public Entry updateEntryById(Long entryId, String newBody) {
-        Entry entry = getEntryById(entryId).orElse(null);
-        if (entry != null) {
-            entry.setEntryBody(newBody);
-            return entryRepository.save(entry);
-        }
-        return null; // Entry not found
     }
 
     //DELETE
     public void deleteEntryById(Long entryId) {
         entryRepository.deleteById(entryId);
-    }
-
-    public void deleteEntry(Entry entry) {
-        entryRepository.delete(entry);
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.mytodolist.dto.EntryDTO;
@@ -49,6 +50,7 @@ public class EntryController {
 
     @PostMapping
     @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
     public Entry postEntity(@RequestBody EntryDTO entryDTO) {
         logger.info("Creating new entry for user: {}", entryDTO.getUsername());
         logger.info("Entry body: {}", entryDTO.getEntryBody());
@@ -70,6 +72,8 @@ public class EntryController {
     }
 
     @DeleteMapping("/{entryId}")
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEntry(@PathVariable Long entryId) {
         entryService.deleteEntryById(entryId);
     }
