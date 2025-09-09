@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,6 +35,8 @@ public class UserServiceTest {
         Optional<User> foundUser = userService.findByUsername("testuser");
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getUsername()).isEqualTo("testuser");
+
+        verify(userRepository).findByUsername("testuser");
     }
 
     @Test
@@ -44,10 +48,18 @@ public class UserServiceTest {
         Optional<User> foundUser = userService.findById(1L);
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getId()).isEqualTo(1L);
+
+        verify(userRepository).findById(1L);
     }
 
     @Test
     public void testDeleteUser() {
+
+        Long userId = 1L;
+
+        doNothing().when(userRepository).deleteById(userId);
+        userService.deleteUser(userId);
+        verify(userRepository).deleteById(userId);
     }
 
 }

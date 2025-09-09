@@ -70,7 +70,6 @@ public class UserControllerTest {
     @Test
     public void testGetUserByUsername_NotFound() throws Exception {
         when(userService.findByUsername("nonexistent")).thenReturn(Optional.empty());
-
         mockMvc.perform(get("/api/users/{username}", "nonexistent")
                 .with(user("testuser").password("password")))
                 .andExpect(status().isNotFound()); // or whatever your controller throws

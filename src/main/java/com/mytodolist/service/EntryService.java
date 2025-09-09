@@ -11,8 +11,10 @@ import com.mytodolist.model.User;
 import com.mytodolist.repository.EntryRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class EntryService {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(EntryService.class);

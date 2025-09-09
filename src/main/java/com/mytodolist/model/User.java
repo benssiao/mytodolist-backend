@@ -101,11 +101,4 @@ public class User implements Serializable {
         return Objects.hash(id);
     }
 
-    public boolean isAnonymous() {
-        return password == null;
-    }
-
-    public boolean isRegistered() {
-        return password != null;
-    }
 }

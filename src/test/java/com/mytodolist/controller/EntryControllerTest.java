@@ -28,7 +28,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
 import java.util.Optional;
+
+import com.mytodolist.exceptions.UserNotFoundException;
 
 @WebMvcTest(EntryController.class)
 public class EntryControllerTest {
@@ -63,6 +66,31 @@ public class EntryControllerTest {
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$", hasSize(2)));
 
+    }
+
+    @Test
+    public void testGetEntries_NotFound() throws Exception {
+        when(userService.findByUsername("nonexistent")).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/entries/{username}", "nonexistent")
+                .with(user("testuser").password("password")))
+                .andExpect(status().isNotFound());
+
+        verify(userService).findByUsername("nonexistent");
+    }
+
+    @Test
+    public void testGetEmptyEntries() throws Exception {
+        when(userService.findByUsername("testuser")).thenReturn(Optional.of(new User("testuser", "password")));
+        when(entryService.getEntriesByUser(any(User.class))).thenReturn(List.of());
+
+        this.mockMvc.perform(get("/api/entries/{username}", "testuser")
+                .with(user("testuser")))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$", hasSize(0)));
+        verify(entryService).getEntriesByUser(any(User.class));
+        verify(userService).findByUsername("testuser");
     }
 
     @Test

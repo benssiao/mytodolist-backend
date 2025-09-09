@@ -2,18 +2,24 @@ package com.mytodolist.service;
 
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mytodolist.model.User;
 import com.mytodolist.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //CREATE
@@ -21,7 +27,11 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -37,13 +47,14 @@ public class UserService {
     //UPDATE
     //DELETE
     public void deleteUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("User with ID " + userId + " does not exist");
+        }
         userRepository.deleteById(userId);
     }
 
-    //validation
-    public boolean validateUser(String username, String password) {
-        // Logic to validate user credentials
-        return true; // Placeholder return statement
+    public void clearAllRefreshTokens(User user) {
+        userRepository.deleteAllRefreshTokens(user);
     }
 
 }

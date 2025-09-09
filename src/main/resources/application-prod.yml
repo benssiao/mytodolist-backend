@@ -1,0 +1,4 @@
+jwt:
+  secret: ${JWT_SECRET:default-secret-key}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}

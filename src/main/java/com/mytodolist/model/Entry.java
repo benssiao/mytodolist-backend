@@ -70,10 +70,6 @@ public class Entry implements Serializable {
         this.entryBody = entryBody;
     }
 
-    public boolean isOwnedByAnonymous() {
-        return user.getPassword() == null;
-    }
-
     @Override
     public String toString() {
         return "Entry{"
