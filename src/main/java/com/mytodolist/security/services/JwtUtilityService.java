@@ -1,10 +1,11 @@
 package com.mytodolist.security.services;
 
-import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 
-import org.springframework.stereotype.Service;
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service; // Add this import
 
 import com.mytodolist.security.config.JwtConfig;
 
@@ -19,29 +20,28 @@ import io.jsonwebtoken.security.SignatureException;
 public class JwtUtilityService {
 
     private final JwtConfig jwtConfig;
-    private final Key signingKey;
+    private final SecretKey signingKey;
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtUtilityService.class);
 
     public JwtUtilityService(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
-        this.signingKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
-
+        this.signingKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes()); // This returns SecretKey
     }
 
     public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(Instant.now().toEpochMilli() + jwtConfig.getExpiration()))
+                .subject(username)
+                .expiration(new Date(Instant.now().toEpochMilli() + jwtConfig.getExpiration()))
                 .signWith(signingKey)
                 .compact();
     }
 
     public String getUsernameFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+        return Jwts.parser()
+                .verifyWith(signingKey) 
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
     }
 
@@ -78,11 +78,10 @@ public class JwtUtilityService {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+        return Jwts.parser()
+                .verifyWith(signingKey) 
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
-
 }

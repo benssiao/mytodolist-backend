@@ -1,4 +1,4 @@
-package com.mytodolist.model;
+package com.mytodolist.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -26,6 +26,3 @@ logging:
     org.hibernate: WARN # Hibernate - only warnings/errors
     root: WARN # Everything else - minimal noise
 
-jwt:
-  secret: ${JWT_SECRET:default-secret-key}
-  expiration: ${JWT_EXPIRATION:86400000}

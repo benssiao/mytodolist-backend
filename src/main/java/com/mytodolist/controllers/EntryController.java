@@ -1,4 +1,4 @@
-package com.mytodolist.controller;
+package com.mytodolist.controllers;
 
 import java.util.List;
 
@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.mytodolist.dto.EntryDTO;
+import com.mytodolist.dtos.EntryDTO;
 import com.mytodolist.exceptions.EntryNotFoundException;
-import com.mytodolist.model.Entry;
-import com.mytodolist.model.User;
+import com.mytodolist.models.Entry;
+import com.mytodolist.models.User;
 import com.mytodolist.security.userdetails.TodoUserDetails;
-import com.mytodolist.service.EntryService;
+import com.mytodolist.services.EntryService;
 
-@Controller
+@RestController
 @RequestMapping(path = "/api/v1/entries", produces = "application/json")
 @CrossOrigin(origins = "http://localhost:5173") // Allow cross-origin requests from frontend
 public class EntryController {
@@ -39,7 +39,6 @@ public class EntryController {
     }
 
     @GetMapping
-    @ResponseBody
     public List<Entry> getEntries(Authentication auth) {
         // turn this into a pagination version later.
 
@@ -48,7 +47,6 @@ public class EntryController {
     }
 
     @PostMapping
-    @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
     public Entry createEntry(@RequestBody EntryDTO entryDTO, Authentication auth) {
         Entry entry = new Entry();
@@ -59,7 +57,6 @@ public class EntryController {
     }
 
     @PutMapping("/{entryId}")
-    @ResponseBody
     public Entry updateEntry(@PathVariable Long entryId, @RequestBody String newBody, Authentication auth) {
         String loggedInUsername = ((TodoUserDetails) auth.getPrincipal()).getUser().getUsername();
         Entry entry = entryService.getEntryById(entryId).orElseThrow(() -> new EntryNotFoundException("Entry with id " + entryId + " not found"));
@@ -72,7 +69,6 @@ public class EntryController {
     }
 
     @DeleteMapping("/{entryId}")
-    @ResponseBody
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEntry(@PathVariable Long entryId, Authentication auth) {
         String loggedInUsername = ((TodoUserDetails) auth.getPrincipal()).getUser().getUsername();

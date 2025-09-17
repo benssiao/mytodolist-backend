@@ -39,10 +39,3 @@ logging:
     root: INFO # Default logging level
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
-# JWT Configuration
-jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION:86400000}
-
-  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}

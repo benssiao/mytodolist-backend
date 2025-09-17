@@ -12,8 +12,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.mytodolist.model.User;
-import com.mytodolist.repository.UserRepository;
+import com.mytodolist.models.User;
+import com.mytodolist.repositories.UserRepository;
+import com.mytodolist.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {

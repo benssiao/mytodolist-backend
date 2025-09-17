@@ -9,14 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import com.mytodolist.model.Entry;
-import com.mytodolist.model.User;
-import com.mytodolist.service.EntryService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.mytodolist.service.UserService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +24,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.util.Optional;
 
+import com.mytodolist.controllers.EntryController;
 import com.mytodolist.exceptions.UserNotFoundException;
+import com.mytodolist.models.Entry;
+import com.mytodolist.models.User;
+import com.mytodolist.services.EntryService;
+import com.mytodolist.services.UserService;
 
 @WebMvcTest(EntryController.class)
 public class EntryControllerTest {

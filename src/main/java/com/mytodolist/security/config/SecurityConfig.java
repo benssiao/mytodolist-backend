@@ -12,18 +12,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.mytodolist.security.filters.JwtAuthFilter;
 import com.mytodolist.security.providers.UsernamePasswordAuthenticationProvider;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final UsernamePasswordAuthenticationProvider authenticationProvider;
-    private final JwtAuthFilter JwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = new JwtAuthenticationEntryPoint();
 
-    public SecurityConfig(UsernamePasswordAuthenticationProvider authenticationProvider, JwtAuthFilter JwtAuthFilter) {
+    public SecurityConfig(UsernamePasswordAuthenticationProvider authenticationProvider, JwtAuthFilter jwtAuthFilter) {
         this.authenticationProvider = authenticationProvider;
-        this.JwtAuthFilter = JwtAuthFilter;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
@@ -36,17 +40,53 @@ public class SecurityConfig {
         http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
         );
+
         http
                 .sessionManagement(session
                         -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/login").permitAll()
+                // Public authentication endpoints
+                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/register").permitAll()
+                .requestMatchers("/api/v1/auth/refresh").permitAll()
+                .requestMatchers("/api/v1/auth/logout").permitAll()
+                // H2 Console (development only)
+                .requestMatchers("/h2-console/**").permitAll()
+                // Actuator endpoints (health checks)
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/info").permitAll()
+                // API Documentation (Swagger)
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui.html").permitAll()
+                // All other requests require authentication
                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(JwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .csrf(csrf -> csrf.disable()); // Disable CSRF for stateless JWT
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+                .ignoringRequestMatchers("/api/v1/**")
+                .disable()
+                )
+                .headers(headers -> headers
+                .frameOptions().sameOrigin() // Allow H2 console frames
+                );
 
         return http.build();
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173")); // frontend
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

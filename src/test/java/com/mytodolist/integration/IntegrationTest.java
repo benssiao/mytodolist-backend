@@ -1,8 +1,15 @@
 package com.mytodolist.integration;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import jakarta.transaction.Transactional;
+
+@SpringBootTest
+@Transactional
+@Rollback
 public class IntegrationTest {
+
+  
 
 }

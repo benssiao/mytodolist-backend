@@ -1,12 +1,12 @@
-package com.mytodolist.service;
+package com.mytodolist.services;
 
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.mytodolist.model.User;
-import com.mytodolist.repository.UserRepository;
+import com.mytodolist.models.User;
+import com.mytodolist.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -51,10 +51,6 @@ public class UserService {
             throw new IllegalArgumentException("User with ID " + userId + " does not exist");
         }
         userRepository.deleteById(userId);
-    }
-
-    public void clearAllRefreshTokens(User user) {
-        userRepository.deleteAllRefreshTokens(user);
     }
 
 }

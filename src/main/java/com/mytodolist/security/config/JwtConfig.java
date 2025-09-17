@@ -15,8 +15,6 @@ public class JwtConfig {
 
     @NotBlank(message = "JWT secret cannot be blank")
     private String secret;
-    @NotBlank(message = "JWT refresh secret cannot be blank")
-    private String refreshSecret;
 
     @NotNull(message = "JWT expiration must be set")
     @Min(value = 1, message = "Expiration must be positive")
@@ -39,14 +37,6 @@ public class JwtConfig {
 
     public void setExpiration(Long expiration) {
         this.expiration = expiration;
-    }
-
-    public String getRefreshSecret() {
-        return refreshSecret;
-    }
-
-    public void setRefreshSecret(String refreshSecret) {
-        this.refreshSecret = refreshSecret;
     }
 
     public Long getRefreshExpiration() {

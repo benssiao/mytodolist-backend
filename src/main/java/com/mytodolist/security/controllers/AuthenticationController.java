@@ -1,37 +1,33 @@
-package com.mytodolist.controller;
+package com.mytodolist.security.controllers;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.mytodolist.dto.UsernameAndPasswordDTO;
-import com.mytodolist.dto.RefreshRequestDTO;
-import com.mytodolist.dto.LogoutRequest;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-
-import com.mytodolist.dto.LoginResponseDTO;
-import com.mytodolist.dto.RefreshResponseDTO;
-import com.mytodolist.dto.RegisterResponseDTO;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-
-import com.mytodolist.model.User;
-import com.mytodolist.model.RefreshToken;
-import com.mytodolist.service.RefreshTokenService;
+import com.mytodolist.models.User;
+import com.mytodolist.security.dtos.LoginResponseDTO;
+import com.mytodolist.security.dtos.LogoutRequestDTO;
+import com.mytodolist.security.dtos.LogoutResponseDTO;
+import com.mytodolist.security.dtos.RefreshRequestDTO;
+import com.mytodolist.security.dtos.RefreshResponseDTO;
+import com.mytodolist.security.dtos.RegisterResponseDTO;
+import com.mytodolist.security.dtos.UsernameAndPasswordDTO;
+import com.mytodolist.security.models.RefreshToken;
 import com.mytodolist.security.services.JwtUtilityService;
+import com.mytodolist.security.services.RefreshTokenService;
+import com.mytodolist.security.services.RoleService;
 import com.mytodolist.security.userdetails.TodoUserDetails;
-import com.mytodolist.service.UserService;
-import com.mytodolist.dto.RegisterResponseDTO;
-import com.mytodolist.security.config.PasswordConfig;
-import com.mytodolist.dto.LogoutRequestDTO;
-import com.mytodolist.dto.RefreshRequestDTO;
-import com.mytodolist.dto.LogoutResponseDTO;
+import com.mytodolist.services.UserService;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -42,13 +38,15 @@ public class AuthenticationController {
     private final JwtUtilityService jwtUtilityService;
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
+    private final RoleService roleService;
 
     public AuthenticationController(AuthenticationManager authenticationManager,
-            JwtUtilityService jwtUtilityService, RefreshTokenService refreshTokenService, UserService userService) {
+            JwtUtilityService jwtUtilityService, RefreshTokenService refreshTokenService, UserService userService, RoleService roleService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtilityService = jwtUtilityService;
         this.refreshTokenService = refreshTokenService;
         this.userService = userService;
+        this.roleService = roleService;
 
     }
 
@@ -58,11 +56,22 @@ public class AuthenticationController {
         String username = auth.getName();
         TodoUserDetails userDetails = (TodoUserDetails) auth.getPrincipal();
 
+        Set<String> roles = roleService.getUserRoles(userDetails.getId());
+        if (roles == null || roles.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User has no roles assigned");
+        }
         refreshTokenService.logout(userDetails.getUser()); // This deletes old tokens
+
         String jwtToken = jwtUtilityService.generateToken(auth.getName());
         RefreshToken refreshTokenEntity = refreshTokenService.createRefreshToken(userDetails);
 
-        LoginResponseDTO response = new LoginResponseDTO(jwtToken, refreshTokenEntity.getRefreshToken(), username, userDetails.getId());
+        LoginResponseDTO response = new LoginResponseDTO(
+                jwtToken,
+                refreshTokenEntity.getRefreshToken(),
+                username,
+                userDetails.getId(),
+                roles
+        );
 
         return ResponseEntity.status(HttpStatus.OK)
                 .header("Content-Type", "application/json")
@@ -79,6 +88,8 @@ public class AuthenticationController {
         if (createdUser == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed");
         }
+
+        roleService.assignRoleToUser(createdUser.getId(), "ROLE_USER");
         RegisterResponseDTO response = new RegisterResponseDTO(
                 "User registered successfully",
                 createdUser.getId(),
@@ -107,7 +118,6 @@ public class AuthenticationController {
         refreshTokenService.invalidateRefreshToken(existingToken); // invalidate old refresh token
 
         return ResponseEntity.ok().body(newRefreshTokenResponse);
-
     }
 
     @PostMapping("/logout")
@@ -124,3 +134,28 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(new LogoutResponseDTO("User logged out successfully", username));
 
     }
+
+    @PostMapping("/verifyaccess")
+    public ResponseEntity<String> verifyToken(@RequestBody String accessToken) {
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is required");
+        }
+        boolean isValid = jwtUtilityService.validateToken(accessToken);
+        if (!isValid) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token");
+        }
+        return ResponseEntity.ok("Token is valid");
+    }
+
+    @PostMapping("/verifyrefresh")
+    public ResponseEntity<String> verifyRefreshToken(@RequestBody String refreshToken) {
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token is required");
+        }
+        boolean isValid = refreshTokenService.isValidRefreshToken(refreshToken);
+        if (!isValid) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token");
+        }
+        return ResponseEntity.ok("Refresh token is valid");
+    }
+}

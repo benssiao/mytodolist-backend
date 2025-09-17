@@ -1,12 +1,8 @@
-package com.mytodolist.dto;
+package com.mytodolist.security.dtos;
 
 public class RefreshRequestDTO {
 
     private String refreshToken;
-
-    RefreshRequestDTO(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
 
     public String getOldRefreshToken() {
         return refreshToken;

@@ -1,7 +1,9 @@
-package com.mytodolist.model;
+package com.mytodolist.security.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.mytodolist.models.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

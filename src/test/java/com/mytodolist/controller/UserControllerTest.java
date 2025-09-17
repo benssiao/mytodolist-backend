@@ -6,9 +6,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 
-import com.mytodolist.service.UserService;
-
-import com.mytodolist.model.User;
+import com.mytodolist.controllers.UserController;
+import com.mytodolist.models.User;
+import com.mytodolist.services.UserService;
 
 import org.mockito.ArgumentCaptor;
 import static org.assertj.core.api.Assertions.assertThat;

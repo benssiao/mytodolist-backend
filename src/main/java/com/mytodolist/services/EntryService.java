@@ -1,4 +1,4 @@
-package com.mytodolist.service;
+package com.mytodolist.services;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.mytodolist.model.Entry;
-import com.mytodolist.model.User;
-import com.mytodolist.repository.EntryRepository;
+import com.mytodolist.models.Entry;
+import com.mytodolist.models.User;
+import com.mytodolist.repositories.EntryRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

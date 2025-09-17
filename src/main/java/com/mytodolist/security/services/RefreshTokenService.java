@@ -1,13 +1,13 @@
-package com.mytodolist.service;
+package com.mytodolist.security.services;
 
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.mytodolist.model.RefreshToken;
-import com.mytodolist.model.User;
-import com.mytodolist.repository.RefreshTokenRepository;
+import com.mytodolist.models.User;
 import com.mytodolist.security.config.JwtConfig;
+import com.mytodolist.security.models.RefreshToken;
+import com.mytodolist.security.repositories.RefreshTokenRepository;
 import com.mytodolist.security.userdetails.TodoUserDetails;
 
 import jakarta.transaction.Transactional;
@@ -69,7 +69,8 @@ public class RefreshTokenService {
     }
 
     public boolean isValidRefreshToken(String token) {
-        return refreshTokenRepository.findValidRefreshToken(token, LocalDateTime.now()).isPresent();
+        return refreshTokenRepository.findValidRefreshToken(token, LocalDateTime.now()).isPresent(); // this tries to find any refreshtoken which is not expired
+        // with comparison to LocalDateTime.now().
     }
 
 }

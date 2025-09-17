@@ -16,10 +16,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.mytodolist.model.Entry;
-import com.mytodolist.model.User;
-import com.mytodolist.repository.EntryRepository;
-import com.mytodolist.repository.UserRepository;
+import com.mytodolist.models.Entry;
+import com.mytodolist.models.User;
+import com.mytodolist.repositories.EntryRepository;
+import com.mytodolist.repositories.UserRepository;
+import com.mytodolist.services.EntryService;
 
 @ExtendWith(MockitoExtension.class)
 public class EntryServiceTest {

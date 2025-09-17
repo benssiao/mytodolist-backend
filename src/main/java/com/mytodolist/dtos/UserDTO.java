@@ -1,4 +1,4 @@
-package com.mytodolist.dto;
+package com.mytodolist.dtos;
 
 public class UserDTO {
 

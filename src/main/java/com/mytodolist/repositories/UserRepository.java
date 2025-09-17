@@ -1,10 +1,10 @@
-package com.mytodolist.repository;
+package com.mytodolist.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.mytodolist.model.User;
+import com.mytodolist.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

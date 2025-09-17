@@ -1,4 +1,4 @@
-package com.mytodolist.dto;
+package com.mytodolist.security.dtos;
 
 public class RefreshResponseDTO {
 

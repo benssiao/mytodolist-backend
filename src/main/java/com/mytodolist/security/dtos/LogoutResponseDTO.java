@@ -1,14 +1,12 @@
-package com.mytodolist.dto;
+package com.mytodolist.security.dtos;
 
-public class RegisterResponseDTO {
+public class LogoutResponseDTO {
 
     private String message;
-    private Long userId;
     private String username;
 
-    public RegisterResponseDTO(String message, Long userId, String username) {
+    public LogoutResponseDTO(String message, String username) {
         this.message = message;
-        this.userId = userId;
         this.username = username;
     }
 
@@ -18,14 +16,6 @@ public class RegisterResponseDTO {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getUsername() {

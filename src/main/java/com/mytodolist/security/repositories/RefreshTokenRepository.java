@@ -1,4 +1,4 @@
-package com.mytodolist.repository;
+package com.mytodolist.security.repositories;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.mytodolist.model.RefreshToken;
-import com.mytodolist.model.User;
+import com.mytodolist.models.User;
+import com.mytodolist.security.models.RefreshToken;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 

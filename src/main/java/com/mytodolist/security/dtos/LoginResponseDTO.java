@@ -1,4 +1,6 @@
-package com.mytodolist.dto;
+package com.mytodolist.security.dtos;
+
+import java.util.Set;
 
 public class LoginResponseDTO {
 
@@ -6,12 +8,14 @@ public class LoginResponseDTO {
     private String refreshToken;
     private String username;
     private Long userId;
+    private Set<String> roles;
 
-    public LoginResponseDTO(String accessToken, String refreshToken, String username, Long userId) {
+    public LoginResponseDTO(String accessToken, String refreshToken, String username, Long userId, Set<String> roles) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.username = username;
         this.userId = userId;
+        this.roles = roles;
     }
 
     public String getAccessToken() {
@@ -44,6 +48,14 @@ public class LoginResponseDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
 }
