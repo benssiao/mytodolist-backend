@@ -21,6 +21,7 @@ public class TodoUserDetailsService implements UserDetailsService {
 
     @Override
     public TodoUserDetails loadUserByUsername(String username) {
+
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
         return new TodoUserDetails(user, roleService);

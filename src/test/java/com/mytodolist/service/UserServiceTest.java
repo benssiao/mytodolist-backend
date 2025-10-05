@@ -58,6 +58,8 @@ public class UserServiceTest {
 
         Long userId = 1L;
 
+        when(userRepository.existsById(userId)).thenReturn(true);
+
         doNothing().when(userRepository).deleteById(userId);
         userService.deleteUser(userId);
         verify(userRepository).deleteById(userId);

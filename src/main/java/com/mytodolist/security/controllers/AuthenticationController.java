@@ -22,6 +22,8 @@ import com.mytodolist.security.dtos.RefreshRequestDTO;
 import com.mytodolist.security.dtos.RefreshResponseDTO;
 import com.mytodolist.security.dtos.RegisterResponseDTO;
 import com.mytodolist.security.dtos.UsernameAndPasswordDTO;
+import com.mytodolist.security.dtos.VerifyAccessTokenRequestDTO;
+import com.mytodolist.security.dtos.VerifyRefreshTokenDTO;
 import com.mytodolist.security.models.RefreshToken;
 import com.mytodolist.security.services.JwtUtilityService;
 import com.mytodolist.security.services.RefreshTokenService;
@@ -89,7 +91,7 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed");
         }
 
-        roleService.assignRoleToUser(createdUser.getId(), "ROLE_USER");
+        roleService.assignRoleToUser(createdUser.getId(), "USER");
         RegisterResponseDTO response = new RegisterResponseDTO(
                 "User registered successfully",
                 createdUser.getId(),
@@ -100,7 +102,7 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponseDTO> refresh(@RequestBody RefreshRequestDTO refreshRequest) {
-        String requestTokenString = refreshRequest.getOldRefreshToken();
+        String requestTokenString = refreshRequest.getRefreshToken();
         if (requestTokenString == null || requestTokenString.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token is required");
         }
@@ -136,11 +138,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verifyaccess")
-    public ResponseEntity<String> verifyToken(@RequestBody String accessToken) {
-        if (accessToken == null || accessToken.trim().isEmpty()) {
+    public ResponseEntity<String> verifyToken(@RequestBody VerifyAccessTokenRequestDTO accessToken) {
+        String accessTokenString = accessToken.getAccessToken();
+        if (accessTokenString == null || accessTokenString.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is required");
         }
-        boolean isValid = jwtUtilityService.validateToken(accessToken);
+        boolean isValid = jwtUtilityService.validateToken(accessTokenString);
         if (!isValid) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token");
         }
@@ -148,11 +151,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verifyrefresh")
-    public ResponseEntity<String> verifyRefreshToken(@RequestBody String refreshToken) {
-        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+    public ResponseEntity<String> verifyRefreshToken(@RequestBody VerifyRefreshTokenDTO refreshToken) {
+        String refreshTokenString = refreshToken.getRefreshToken();
+        if (refreshTokenString == null || refreshTokenString.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token is required");
         }
-        boolean isValid = refreshTokenService.isValidRefreshToken(refreshToken);
+        boolean isValid = refreshTokenService.isValidRefreshToken(refreshTokenString);
         if (!isValid) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token");
         }

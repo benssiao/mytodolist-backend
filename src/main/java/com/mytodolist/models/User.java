@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -21,8 +24,16 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min = 3, message = "Username must be between 3 and 999 characters")
+    @NotBlank(message = "Username cannot be blank")
+    @Size(min = 6, message = "Username must be at least 6 characters")
+    @Size(max = 50, message = "Username cannot exceed 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Username can only contain letters, numbers, hyphens, and underscores")
+    @Column(unique = true, nullable = false)
     private String username;
+    @Size(min = 8, message = "Password must be at least 8 characters"
+    )
+    @Size(max = 100, message = "Password cannot exceed 100 characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$", message = "Password must contain at least one uppercase letter, one lowercase letter, and one digit")
     private String password;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Entry> entries;

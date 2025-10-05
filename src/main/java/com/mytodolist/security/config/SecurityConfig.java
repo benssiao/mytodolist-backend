@@ -51,6 +51,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/register").permitAll()
                 .requestMatchers("/api/v1/auth/refresh").permitAll()
                 .requestMatchers("/api/v1/auth/logout").permitAll()
+                .requestMatchers("/api/v1/auth/verifyaccess").permitAll()
+                .requestMatchers("/api/v1/auth/verifyrefresh").permitAll()
                 // H2 Console (development only)
                 .requestMatchers("/h2-console/**").permitAll()
                 // Actuator endpoints (health checks)
@@ -64,11 +66,14 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                /* 
                 .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**")
                 .ignoringRequestMatchers("/api/v1/**")
                 .disable()
                 )
+                 */
                 .headers(headers -> headers
                 .frameOptions().sameOrigin() // Allow H2 console frames
                 );

@@ -1,8 +1,8 @@
 package com.mytodolist.security.dtos;
 
-public class RefreshRequestDTO {
+public class VerifyRefreshTokenDTO {
 
-    private String refreshToken;
+    String refreshToken;
 
     public String getRefreshToken() {
         return refreshToken;
