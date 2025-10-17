@@ -1,7 +1,9 @@
 package com.mytodolist.security.services;
 
-import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.Instant;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mytodolist.models.User;
@@ -18,22 +20,23 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtConfig jwtConfig;
+    private final Clock clock;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtConfig jwtConfig) {
+
+    
+
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtConfig jwtConfig, Clock clock) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtConfig = jwtConfig;
+        this.clock = clock;
     }
 
     //CREATE
     public RefreshToken createRefreshToken(User user) {
         // create new token based on user.
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
-
-        // milliseconds to LocalDateTime
-        LocalDateTime expiresAt = LocalDateTime.now()
-                .plusSeconds(jwtConfig.getRefreshExpiration() / 1000);
-        refreshToken.setExpiresAt(expiresAt);
+        Instant now = Instant.now(clock);
+        Instant expiry = now.plusSeconds(jwtConfig.getRefreshExpiration() / 1000);
+        RefreshToken refreshToken = new RefreshToken(user, now, expiry);
 
         return refreshTokenRepository.save(refreshToken);
     }
@@ -69,8 +72,13 @@ public class RefreshTokenService {
     }
 
     public boolean isValidRefreshToken(String token) {
-        return refreshTokenRepository.findValidRefreshToken(token, LocalDateTime.now()).isPresent(); // this tries to find any refreshtoken which is not expired
+        return refreshTokenRepository.findValidRefreshToken(token, Instant.now(clock)).isPresent(); // this tries to find any refreshtoken which is not expired
         // with comparison to LocalDateTime.now().
+    }
+
+    @Scheduled(cron = "0 0 2 * * *")
+    public void deleteExpiredTokens() {
+        refreshTokenRepository.deleteExpiredToken(Instant.now(clock));
     }
 
 }

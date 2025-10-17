@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.mytodolist.exceptions.DuplicateUsernameException;
 import com.mytodolist.models.User;
 import com.mytodolist.repositories.UserRepository;
 
@@ -28,7 +29,7 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
         }
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new DuplicateUsernameException("Username already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));

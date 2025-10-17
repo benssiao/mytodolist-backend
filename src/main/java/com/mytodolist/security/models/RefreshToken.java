@@ -1,6 +1,6 @@
 package com.mytodolist.security.models;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import com.mytodolist.models.User;
@@ -21,25 +21,23 @@ public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String refreshToken;
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-
-    private LocalDateTime expiresAt;
-    private LocalDateTime createdAt;
+    private Instant expiresAt;
+    private Instant createdAt;
 
     public RefreshToken() {
         this.refreshToken = UUID.randomUUID().toString();
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = Instant.now();
     }
 
-    public RefreshToken(User user, LocalDateTime expiresAt) {
+    public RefreshToken(User user, Instant createdAt, Instant expiresAt) {
         this(); // Call default constructor
         this.user = user;
         this.expiresAt = expiresAt;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -66,19 +64,19 @@ public class RefreshToken {
         this.user = user;
     }
 
-    public LocalDateTime getExpiresAt() {
+    public Instant getExpiresAt() {
         return expiresAt;
     }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
+    public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -87,7 +85,7 @@ public class RefreshToken {
     }
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiresAt);
+        return Instant.now().isAfter(expiresAt);
     }
 
 }

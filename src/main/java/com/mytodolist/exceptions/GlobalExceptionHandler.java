@@ -27,7 +27,8 @@ public class GlobalExceptionHandler {
         logger.error("Entry not found: {}", ex.getMessage());
         ErrorResponseDTO errorResponse = new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now(),
                 request.getDescription(false));
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+
     }
 
     /*CUSTOM: when user is not found (likely not needed) */
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     /*SPRING SECURITY: When authorization fails in my filterchain  */
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 request.getDescription(false)
         );
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     /*SPRING SECURITY: when validation on an argument annotated with @Valid fails */
@@ -78,7 +79,7 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     /* CUSTOM: when a user tries to access another users data (by sending sneaky requests) */
@@ -94,7 +95,7 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     /*SPRING SECURITY: Thrown when login fails due to wrong username or password */
@@ -110,7 +111,7 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     /*CUSTOM: throw this when a user sends a command which doesnt make sense according to your business logic. */
@@ -126,7 +127,59 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidTokenException(
+            InvalidTokenException ex, WebRequest request) {
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage(),
+                LocalDateTime.now(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidRefreshTokenException(
+            InvalidRefreshTokenException ex, WebRequest request) {
+
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getMessage(),
+                LocalDateTime.now(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+
+    /*CUSTOM: when a user tries to register with a username that already exists */
+    @ExceptionHandler(DuplicateUsernameException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDuplicateUsernameException(
+            DuplicateUsernameException ex, WebRequest request) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.CONFLICT.value(), // 409
+                ex.getMessage(),
+                LocalDateTime.now(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(UnauthenticatedAccessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthenticatedAccessException(
+            UnauthenticatedAccessException ex, WebRequest request) {
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(
+                HttpStatus.UNAUTHORIZED.value(), // 401
+                ex.getMessage(),
+                LocalDateTime.now(),
+                request.getDescription(false)
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     /*CUSTOM: Catch all */
@@ -142,7 +195,7 @@ public class GlobalExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
 }

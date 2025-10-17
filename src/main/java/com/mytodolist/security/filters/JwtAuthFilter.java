@@ -5,11 +5,14 @@ import java.io.IOException;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.mytodolist.exceptions.UnauthorizedAccessException;
+import com.mytodolist.security.config.JwtAuthenticationEntryPoint;
 import com.mytodolist.security.services.JwtUtilityService;
 import com.mytodolist.security.userdetails.TodoUserDetailsService;
 
@@ -25,48 +28,50 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtilityService jwtService;
     private final TodoUserDetailsService todoUserDetailsService;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    public JwtAuthFilter(JwtUtilityService jwtService, TodoUserDetailsService todoUserDetailsService) {
+    public JwtAuthFilter(JwtUtilityService jwtService, TodoUserDetailsService todoUserDetailsService, JwtAuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtService = jwtService;
         this.todoUserDetailsService = todoUserDetailsService;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+        try {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            String jwt = authHeader.substring(7);
+            //log.debug("JWT Token: {}", jwt);
+            if (!jwtService.validateToken(jwt)) {
 
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String jwt = authHeader.substring(7);
-        log.debug("JWT Token: {}", jwt);
-        if (!jwtService.validateToken(jwt)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.warn("Invalid JWT token");
-            return;
-        }
-        String username = jwtService.getUsernameFromToken(jwt);
-        log.debug("Username from token: {}", username);
+                log.warn("Invalid JWT token");
+                throw new UnauthorizedAccessException("Invalid or expired JWT token");
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            try {
+            }
+            String username = jwtService.getUsernameFromToken(jwt);
+            log.debug("Username from token: {}", username);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                 UserDetails userDetails = todoUserDetailsService.loadUserByUsername(username);
                 Authentication authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 log.debug("User {} authenticated successfully", username);
 
-            } catch (Exception e) {
-                log.error("Error during authentication: {}", e.getMessage());
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-                return;
             }
+            filterChain.doFilter(request, response);
+        } catch (UnauthorizedAccessException ex) {
+            log.error("Unauthorized access: {}", ex.getMessage());
+            authenticationEntryPoint.commence(request, response, new AuthenticationException(ex.getMessage()) {
+            });
 
         }
-        filterChain.doFilter(request, response);
 
     }
 }

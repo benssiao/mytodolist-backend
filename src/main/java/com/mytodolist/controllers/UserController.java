@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mytodolist.exceptions.UnauthorizedAccessException;
+import com.mytodolist.exceptions.UnauthenticatedAccessException;
 import com.mytodolist.models.User;
 import com.mytodolist.security.userdetails.TodoUserDetails;
 import com.mytodolist.services.UserService;
@@ -22,9 +22,10 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private final PasswordEncoder passwordEncoder;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     public UserController(@Valid UserService userService, PasswordEncoder passwordEncoder) {
@@ -35,10 +36,10 @@ public class UserController {
     @GetMapping("/me")
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new UnauthorizedAccessException("User is not authenticated");
-        }
 
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new UnauthenticatedAccessException("User is not authenticated");
+        }
         return ((TodoUserDetails) auth.getPrincipal()).getUser();
     }
 

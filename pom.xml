@@ -142,6 +142,12 @@
       <artifactId>spring-dotenv</artifactId>
       <version>4.0.0</version>
     </dependency>
+
+    <!-- Java 8 date/time support -->
+    <dependency>
+  <groupId>com.fasterxml.jackson.datatype</groupId>
+  <artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
 		<!-- Production Database (Optional - uncomment when ready for production) -->
 		<!--
 		<dependency>

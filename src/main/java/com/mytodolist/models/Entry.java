@@ -1,7 +1,7 @@
 package com.mytodolist.models;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,7 +29,7 @@ public class Entry implements Serializable {
     private User user;
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Size(max = 5000, message = "Entry body too long")
     @Column(length = 5000, nullable = false)
@@ -63,11 +63,11 @@ public class Entry implements Serializable {
         this.user = user;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 

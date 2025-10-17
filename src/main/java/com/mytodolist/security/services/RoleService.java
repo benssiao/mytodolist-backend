@@ -40,7 +40,7 @@ public class RoleService {
                 .orElseGet(() -> createRole(roleName)); // if role doesnt exist, create it. doesnt matter because security only has fixed roles to check.
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-        role.getUsers().add(user);
+        role.addUser(user);
         roleRepository.save(role);
     }
 
@@ -49,7 +49,7 @@ public class RoleService {
                 .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-        role.getUsers().remove(user);
+        role.removeUser(user);
         roleRepository.save(role);
     }
 

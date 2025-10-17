@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,22 +28,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.security.core.Authentication;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mytodolist.controllers.EntryController;
 import com.mytodolist.customauthtoken.WithCustomUser;
 import com.mytodolist.dtos.EntryDTO;
 import com.mytodolist.models.Entry;
 import com.mytodolist.models.User;
-import com.mytodolist.security.config.JwtAuthenticationEntryPoint;
 import com.mytodolist.security.providers.UsernamePasswordAuthenticationProvider;
 import com.mytodolist.security.services.JwtUtilityService;
+import com.mytodolist.security.services.RefreshTokenService;
+import com.mytodolist.security.services.RoleService;
+import com.mytodolist.security.userdetails.TodoUserDetails;
 import com.mytodolist.services.EntryService;
 import com.mytodolist.services.UserService;
-import com.mytodolist.security.config.SecurityConfig;
-import com.mytodolist.security.userdetails.TodoUserDetails;
-import java.time.LocalDateTime;
+import com.mytodolist.security.userdetails.TodoUserDetailsService;
+import com.mytodolist.security.config.JwtAuthenticationEntryPoint;
+import com.mytodolist.security.config.JwtConfig;
+import com.mytodolist.security.config.TimeConfig;
+import com.mytodolist.security.filters.JwtAuthFilter;
+
+import java.time.Clock;
+import org.springframework.context.annotation.Import;
 
 @WebMvcTest(EntryController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -54,21 +57,24 @@ public class EntryControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @MockBean
-    private EntryService entryService;
 
     @MockBean
-    private UserService userService;
+    JwtUtilityService jwtUtilityService;
     @MockBean
-    private JwtUtilityService jwtUtilityService;
+    RefreshTokenService refreshTokenService;
     @MockBean
-    private com.mytodolist.security.services.RoleService roleService;
+    UserService userService;
     @MockBean
-    private UsernamePasswordAuthenticationProvider authenticationProvider;
+    RoleService roleService;
+
     @MockBean
-    private com.mytodolist.security.userdetails.TodoUserDetailsService todoUserDetailsService;
+    JwtAuthFilter jwtAuthFilter;
+
     @MockBean
-    private com.mytodolist.security.filters.JwtAuthFilter jwtAuthFilter;
+    private PasswordEncoder passwordEncoder;
+
+    @MockBean
+    private EntryService entryService;
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(EntryControllerTest.class);
 
@@ -146,22 +152,37 @@ public class EntryControllerTest {
 
     @Test
     @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
-    public void testCreateEntry_ValidationError() throws Exception {
+    public void testCreateEntry_ValidationError_EntryTooLong() throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TodoUserDetails principal = (TodoUserDetails) auth.getPrincipal();
         User testUser = principal.getUser();
         String body5001 = "a".repeat(5001);
         Entry invalidEntry = new Entry(body5001, testUser);
-        
         String invalidJson = objectMapper.writeValueAsString(invalidEntry);
-        
-        
         when(entryService.createEntry(any(Entry.class), any(User.class))).thenReturn(invalidEntry);
         mockMvc.perform(post("/api/v1/entries")
                 .with(csrf())
                 .contentType("application/json")
                 .content(invalidJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
+    public void testCreateEntry_EmptyEntry() throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        TodoUserDetails principal = (TodoUserDetails) auth.getPrincipal();
+        User testUser = principal.getUser();
+        String emptyBody = "";
+        Entry emptyEntry = new Entry(emptyBody, testUser);
+        String emptyJson = objectMapper.writeValueAsString(emptyEntry);
+        when(entryService.createEntry(any(Entry.class), any(User.class))).thenReturn(emptyEntry);
+        mockMvc.perform(post("/api/v1/entries").with(csrf())
+                .contentType("application/json")
+                .content(emptyJson))
+                .andExpect(status().isCreated());
+
+        verify(entryService).createEntry(any(Entry.class), any(User.class));
     }
 
     @Test
@@ -210,8 +231,6 @@ public class EntryControllerTest {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         TodoUserDetails principal = (TodoUserDetails) auth.getPrincipal();
         User testUser = principal.getUser();
-        logger.info("testUser = {}", testUser
-        );
         Entry newEntry = new Entry("Update me", testUser);
         newEntry.setId(1L);
         Entry updatedEntry = new Entry("I've been updated", testUser);
@@ -277,4 +296,81 @@ public class EntryControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
+    public void testHandleEntryNotFoundException_ThroughController() throws Exception {
+        // Simulate service returning empty Optional, causing EntryNotFoundException
+        when(entryService.getEntryById(999L)).thenReturn(Optional.empty());
+
+        EntryDTO updateDTO = new EntryDTO("new body");
+        String json = objectMapper.writeValueAsString(updateDTO);
+
+        mockMvc.perform(put("/api/v1/entries/{entryId}", 999L)
+                .with(csrf())
+                .contentType("application/json")
+                .content(json))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("Entry not found with ID: 999"))
+                .andExpect(jsonPath("$.details").exists());
+    }
+
+    @Test
+    @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
+    public void testHandleUnauthorizedAccessException_ThroughController() throws Exception {
+        // Simulate Entry belonging to another user
+        User otherUser = new User("otheruser", "password");
+        otherUser.setId(2L);
+        Entry entryOwnedByOther = new Entry("Secret", otherUser);
+        entryOwnedByOther.setId(10L);
+        when(entryService.getEntryById(10L)).thenReturn(Optional.of(entryOwnedByOther));
+
+        EntryDTO dto = new EntryDTO("trying to update someone else’s entry");
+        String json = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(put("/api/v1/entries/{entryId}", 10L)
+                .with(csrf())
+                .contentType("application/json")
+                .content(json))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.message").value("You do not have permission to update this entry."))
+                .andExpect(jsonPath("$.details").exists());
+    }
+
+    @Test
+    @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
+    public void testHandleIllegalArgumentException_ThroughController() throws Exception {
+        // Simulate service throwing IllegalArgumentException
+        when(entryService.createEntry(any(Entry.class), any(User.class)))
+                .thenThrow(new IllegalArgumentException("Invalid entry content"));
+
+        EntryDTO dto = new EntryDTO("bad input");
+        String json = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/api/v1/entries")
+                .with(csrf())
+                .contentType("application/json")
+                .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Invalid entry content"))
+                .andExpect(jsonPath("$.details").exists());
+    }
+
+    @Test
+    @WithCustomUser(username = "testuser", roles = {"USER"}, password = "password")
+    public void testHandleGlobalException_ThroughController() throws Exception {
+        // Simulate service throwing generic exception
+        when(entryService.getEntriesByUser(any(User.class)))
+                .thenThrow(new RuntimeException("Unexpected DB failure"));
+
+        mockMvc.perform(get("/api/v1/entries").with(csrf()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").value("An unexpected error occurred"))
+                .andExpect(jsonPath("$.details").exists());
+    }
+
 }

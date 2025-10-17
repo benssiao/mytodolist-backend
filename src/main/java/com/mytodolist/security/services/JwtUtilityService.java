@@ -1,13 +1,16 @@
 package com.mytodolist.security.services;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.crypto.SecretKey;
+import javax.crypto.SecretKey; // Add this import
 
-import org.springframework.stereotype.Service; // Add this import
+import org.springframework.stereotype.Service;
 
+import com.mytodolist.models.User;
 import com.mytodolist.security.config.JwtConfig;
+import com.mytodolist.security.userdetails.TodoUserDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,27 +24,34 @@ public class JwtUtilityService {
 
     private final JwtConfig jwtConfig;
     private final SecretKey signingKey;
+    private final Clock clock;
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtUtilityService.class);
 
-    public JwtUtilityService(JwtConfig jwtConfig) {
+    public JwtUtilityService(JwtConfig jwtConfig, Clock clock) {
         this.jwtConfig = jwtConfig;
         this.signingKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes()); // This returns SecretKey
+        this.clock = clock;
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
+        String username = user.getUsername();
+        Instant now = Instant.now(clock);
+        Instant expiry = now.plusSeconds(jwtConfig.getExpiration() / 1000);
+
         return Jwts.builder()
                 .subject(username)
-                .expiration(new Date(Instant.now().toEpochMilli() + jwtConfig.getExpiration()))
+                .expiration(Date.from(expiry))
                 .signWith(signingKey)
                 .compact();
     }
 
+    public String generateToken(TodoUserDetails todoUserDetails) {
+        User user = todoUserDetails.getUser();
+        return generateToken(user);
+    }
+
     public String getUsernameFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(signingKey) 
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
+        return getClaims(token)
                 .getSubject();
     }
 
@@ -67,7 +77,8 @@ public class JwtUtilityService {
     public boolean isTokenExpired(String token) {
         try {
             Date expiration = getClaims(token).getExpiration();
-            return expiration.before(new Date());
+            return expiration.toInstant().isBefore(Instant.now(clock));
+
         } catch (Exception e) {
             return true;
         }
@@ -79,7 +90,7 @@ public class JwtUtilityService {
 
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(signingKey) 
+                .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

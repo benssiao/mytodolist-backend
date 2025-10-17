@@ -23,11 +23,12 @@ public class SecurityConfig {
 
     private final UsernamePasswordAuthenticationProvider authenticationProvider;
     private final JwtAuthFilter jwtAuthFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = new JwtAuthenticationEntryPoint();
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    public SecurityConfig(UsernamePasswordAuthenticationProvider authenticationProvider, JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(UsernamePasswordAuthenticationProvider authenticationProvider, JwtAuthFilter jwtAuthFilter, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package com.mytodolist.dtos;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import com.mytodolist.models.Entry;
 
@@ -15,7 +15,7 @@ public class EntryResponseDTO {
     @NotNull(message = "Entry must be associated with a user")
     private String username;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     public EntryResponseDTO(Entry entry) {
         this.id = entry.getId();
@@ -38,7 +38,7 @@ public class EntryResponseDTO {
         return username;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 

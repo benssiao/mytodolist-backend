@@ -1,6 +1,6 @@
 package com.mytodolist.service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class EntryServiceTest {
 
         Entry entryToBeCreated = new Entry("Test entry body", new User("testuser", "password"));
         entryToBeCreated.setId(1L);
-        entryToBeCreated.setCreatedAt(LocalDateTime.now());
+        entryToBeCreated.setCreatedAt(Instant.now());
         when(entryRepository.save(any(Entry.class))).thenReturn(entryToBeCreated);
         assertThat(entryService.createEntry(entryToBeCreated, new User("testuser", "password"))).isEqualTo(entryToBeCreated);
         verify(entryRepository).save(any(Entry.class));
@@ -74,7 +74,7 @@ public class EntryServiceTest {
     public void testGetEntryById() {
         Entry entry = new Entry("Test entry body");
         entry.setId(1L);
-        entry.setCreatedAt(LocalDateTime.now());
+        entry.setCreatedAt(Instant.now());
         when(entryRepository.findById(1L)).thenReturn(Optional.of(entry));
         assertThat(entryService.getEntryById(1L)).isPresent().get().isEqualTo(entry);
         verify(entryRepository).findById(1L);
@@ -85,11 +85,11 @@ public class EntryServiceTest {
         User user = new User("testuser", "password");
         Entry oldEntry = new Entry("Old entry body", user);
         oldEntry.setId(1L);
-        oldEntry.setCreatedAt(LocalDateTime.now());
+        oldEntry.setCreatedAt(Instant.now());
 
         Entry newEntry = new Entry("Updated entry body", user);
         newEntry.setId(1L);
-        newEntry.setCreatedAt(LocalDateTime.now());
+        newEntry.setCreatedAt(Instant.now());
 
         when(entryRepository.findById(1L)).thenReturn(Optional.of(oldEntry));
         when(entryRepository.save(any(Entry.class))).thenReturn(newEntry);

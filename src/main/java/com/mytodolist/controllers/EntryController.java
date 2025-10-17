@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +55,6 @@ public class EntryController {
     @ResponseStatus(HttpStatus.CREATED)
     public EntryResponseDTO createEntry(@Valid @RequestBody EntryDTO entryDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         Entry entry = new Entry();
         User user = ((TodoUserDetails) auth.getPrincipal()).getUser();
         entry.setEntryBody(entryDTO.getEntryBody());
@@ -68,7 +66,6 @@ public class EntryController {
     @PutMapping("/{entryId}")
     public EntryResponseDTO updateEntry(@PathVariable Long entryId, @Valid @RequestBody EntryDTO entryDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
         String newBody = entryDTO.getEntryBody();
         String loggedInUsername = ((TodoUserDetails) auth.getPrincipal()).getUser().getUsername();
         Entry entry = entryService.getEntryById(entryId).orElseThrow(() -> new EntryNotFoundException(entryId));

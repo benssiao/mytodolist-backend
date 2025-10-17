@@ -1,6 +1,6 @@
 package com.mytodolist.security.repositories;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +28,13 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     //Cleaning up expired tokens
     @Modifying
     @Query("DELETE from RefreshToken rt where rt.expiresAt < :now")
-    void deleteExpiredToken(@Param("now") LocalDateTime now);
+    void deleteExpiredToken(@Param("now") Instant now);
 
     // find tokens by user AND expires before :now
-    List<RefreshToken> findByUserAndExpiresAtBefore(User user, LocalDateTime now);
+    List<RefreshToken> findByUserAndExpiresAtBefore(User user, Instant now);
 
     // check if token exists and is not expired
     @Query("SELECT rt from RefreshToken rt WHERE rt.refreshToken = :token AND rt.expiresAt > :now")
-    Optional<RefreshToken> findValidRefreshToken(@Param("token") String token, @Param("now") LocalDateTime now);
+    Optional<RefreshToken> findValidRefreshToken(@Param("token") String token, @Param("now") Instant now);
 
 }
