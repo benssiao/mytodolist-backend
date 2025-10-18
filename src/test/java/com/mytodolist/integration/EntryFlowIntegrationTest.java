@@ -194,4 +194,40 @@ public class EntryFlowIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
+    @Test
+    void testDeleteEntry_AlterOtherUser_Returns403() throws Exception {
+        // Register and login as a different user
+        RegisterRequestDTO otherUser = new RegisterRequestDTO("otheruser" + System.currentTimeMillis(), "Password1");
+        String otherUserJson = objectMapper.writeValueAsString(otherUser);
+
+        mockMvc.perform(post("/api/v1/auth/register") // register user2
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(otherUserJson))
+                .andExpect(status().isCreated());
+
+        MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(otherUserJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andReturn();
+
+        String otherUserToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
+
+        MvcResult entriesResult = mockMvc.perform(get("/api/v1/entries") // get user1s entries
+                .with(csrf())
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Integer entryId = JsonPath.read(entriesResult.getResponse().getContentAsString(), "$[0].id");
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/v1/entries/" + entryId) // user2 tries to delete user1s entry
+                .with(csrf())
+                .header("Authorization", "Bearer " + otherUserToken))
+                .andExpect(status().isForbidden());
+    }
+
 }
