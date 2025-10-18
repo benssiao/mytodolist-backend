@@ -95,4 +95,8 @@ public class JwtUtilityService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    public Clock getClock() {
+        return clock;
+    }
 }

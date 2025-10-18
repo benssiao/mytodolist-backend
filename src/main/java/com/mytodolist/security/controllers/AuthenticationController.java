@@ -151,7 +151,7 @@ public class AuthenticationController {
     public ResponseEntity<String> verifyToken(@RequestBody VerifyAccessTokenRequestDTO accessToken) {
         String accessTokenString = accessToken.getAccessToken();
         if (accessTokenString == null || accessTokenString.trim().isEmpty()) {
-            throw new IllegalArgumentException("Token is required");
+            throw new IllegalArgumentException("Access token is required");
         }
         boolean isValid = jwtUtilityService.validateToken(accessTokenString);
         if (!isValid) {
