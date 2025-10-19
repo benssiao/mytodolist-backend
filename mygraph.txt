@@ -1,0 +1,53 @@
+* commit 75d4ae0532c9c3593a5ed35b8d4e9556b41a87bf (HEAD -> main, entryflowintegrationtests)
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Sat Oct 18 14:32:55 2025 -0700
+| 
+|     finished entryflow testing
+| 
+* commit 302d2add543e4a0522d911008817e842bf4475f1
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Sat Oct 18 13:22:01 2025 -0700
+| 
+|     tagged
+| 
+* commit 017d0b5708d781d95553857cec0b2076f2562723 (tag: v0.9, origin/main)
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Thu Oct 16 19:30:43 2025 -0700
+| 
+|     added clock functionality to test time sensitive features
+| 
+* commit c8a9c2d83868737cf9901cea3100fa2c1718f44a
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Sun Oct 5 09:29:47 2025 -0700
+| 
+|     tests mainly work with auth
+| 
+* commit 19d7d9ba367708faf0b42cbb0ea0d506f8132fdd
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Tue Sep 16 23:52:06 2025 -0700
+| 
+|     added repository for roles
+| 
+* commit 0e41f45115806acae3935b065538165ad3baa28b
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Tue Sep 9 10:47:49 2025 -0700
+| 
+|     auth all completed EXCEPTING oauth which I will do later
+| 
+* commit f150e07101267c8b138f1c2f6ec58c01fd64ca59
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Tue Aug 19 03:56:18 2025 -0700
+| 
+|     finished all tests except for services and some integration
+| 
+* commit 16f81eac8e1e588064f43870f8bc7f924ef94b36
+| Author: Ben Xiao <benssiao@gmail.com>
+| Date:   Sun Aug 17 21:29:12 2025 -0700
+| 
+|     added entryController tests
+| 
+* commit 78f93d8b49f5d7e04c2381bf67932e53ec8f07a8
+  Author: Ben Xiao <benssiao@gmail.com>
+  Date:   Sun Aug 17 00:19:32 2025 -0700
+  
+      first
