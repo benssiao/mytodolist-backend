@@ -14,6 +14,7 @@ import com.mytodolist.exceptions.UnauthenticatedAccessException;
 import com.mytodolist.models.User;
 import com.mytodolist.security.userdetails.TodoUserDetails;
 import com.mytodolist.services.UserService;
+import java.util.Set;
 
 import jakarta.validation.Valid;
 
@@ -28,19 +29,23 @@ public class UserController {
 
     private final UserService userService;
 
+    record MeDTO(Long id, String username, Set<String> roles) {
+
+    }
+
     public UserController(@Valid UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/me")
-    public User getCurrentUser() {
+    public MeDTO getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
             throw new UnauthenticatedAccessException("User is not authenticated");
         }
-        return ((TodoUserDetails) auth.getPrincipal()).getUser();
-    }
+        TodoUserDetails userDetails = (TodoUserDetails) auth.getPrincipal();
+        return new MeDTO(userDetails.getUser().getId(), userDetails.getUsername(), userDetails.getRoles());
 
-}
+    }

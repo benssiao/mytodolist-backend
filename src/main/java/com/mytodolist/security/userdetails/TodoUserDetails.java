@@ -50,6 +50,10 @@ public class TodoUserDetails implements UserDetails {
         return user;
     }
 
+    public Set<String> getRoles() {
+        return roleService.getUserRoles(user.getId());
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

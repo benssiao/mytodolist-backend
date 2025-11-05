@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +28,7 @@ public class Entry implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull(message = "Entry must be associated with a user")
+    @JsonBackReference // will not be serialized to prevent circular reference
     private User user;
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
